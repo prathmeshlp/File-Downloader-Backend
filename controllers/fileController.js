@@ -2,7 +2,6 @@ const fs = require("fs");
 const File = require("../models/fileModel");
 
 exports.uploadFile = async (req, res) => {
-  console.log(req)
   const file = req.file;
   console.log(file)
   const { username } = req;
@@ -31,5 +30,17 @@ exports.deleteFile = async (req, res) => {
     res.json({ message: "File removed successfully" });
   } catch (error) {
     console.log(error);
+  }
+};
+
+exports.downloadFile = async (req, res) => {
+  console.log(req.params)
+  const { code } = req.params;
+  const file = await File.findOne({ code: parseInt(code) });
+  if (file) {
+    const filePath = `uploads/${file.filename}`;
+    res.download(filePath);
+  } else {
+    res.status(404).send("File not found");
   }
 };
